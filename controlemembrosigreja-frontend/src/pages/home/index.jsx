@@ -170,10 +170,6 @@ const Home = () => {
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [indexExcluirMembro, setIndexExcluirMembro] = useState(null);
 
-  useEffect(() => {
-    console.log(indexEditMembro);
-  }, [indexEditMembro]);
-
   const handleOpenDialog = (index) => {
     setOpenDialog(true);
   };
@@ -237,24 +233,31 @@ const Home = () => {
       trilho,
     };
 
-    let listaAtualizada;
+    let listaAtualizada = [...(listaMembros || [])];
+    let organizarLista = true;
 
     if (indexEditMembro !== null) {
-      // Editando um membro existente
-      listaAtualizada = listaMembros?.map((membro, index) =>
-        index === indexEditMembro ? infoMembro : membro
-      );
+      // Editando membro existente
+      listaAtualizada = listaAtualizada?.map((membro, index) => {
+        if (index === indexEditMembro) {
+          if (membro.nome === infoMembro.nome) organizarLista = false;
+          return infoMembro;
+        }
+        return membro;
+      });
     } else {
-      // Adicionando um novo membro
-      listaAtualizada = [...listaMembros, infoMembro];
+      // Adicionando novo membro
+      listaAtualizada.push(infoMembro);
     }
 
-    listaAtualizada.sort((a, b) =>
-      a.nome.localeCompare(b.nome, "pt", { sensitivity: "base" })
-    );
+    if (organizarLista) {
+      listaAtualizada.sort((a, b) =>
+        a.nome.localeCompare(b.nome, "pt", { sensitivity: "base" })
+      );
+      setExpanded(false);
+    }
 
     setListaMembros(listaAtualizada);
-    setExpanded(false);
     handleCloseDialog();
   };
 
@@ -459,6 +462,23 @@ const Home = () => {
       </Box>
     );
   };
+
+  const listaFiltrada = listaMembros?.filter((membro) => {
+    const normalizar = (texto) =>
+      texto
+        ?.toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, ""); // Remove acentuação
+
+    const termo = normalizar(pesquisarMembro.trim());
+
+    return (
+      normalizar(membro.nome).includes(termo) ||
+      normalizar(membro.sexo).includes(termo) ||
+      normalizar(membro.situacaoCivil).includes(termo) ||
+      normalizar(membro.funcaoIgreja).includes(termo)
+    );
+  });
 
   const opcoesSituacaoCivil = ["Solteiro", "Casado", "Divorciado", "Viúvo"];
   const classeProfessorOptions = [
@@ -1117,6 +1137,15 @@ const Home = () => {
             Use a barra de pesquisa acima para encontrar membros ou adicione
             novos membros clicando no botão "Adicionar Membro".
           </Typography>
+          <Typography
+            variant="body1"
+            textAlign="center"
+            color="text.secondary"
+            fontStyle="italic"
+            fontSize={12}
+          >
+            Pesquise por Nome, Sexo, Situação Civil ou Função na Igreja.
+          </Typography>
         </Box>
         <Box sx={styles.boxConteudoPrincipal}>
           <Typography
@@ -1133,137 +1162,125 @@ const Home = () => {
             Lista de Membros
           </Typography>
 
-          {listaMembros?.map((membro, index) => (
-            <Accordion
-              expanded={expanded === index}
-              onChange={handleToggleExpand(index)}
-              sx={styles.AccordionMembro}
-              key={index}
-            >
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls={`panel${index}-content`}
-                id={`panel${index}-header`}
-                sx={styles.AccordionMembroSummary}
+          {listaFiltrada?.length > 0 ? (
+            listaFiltrada?.map((membro, index) => (
+              <Accordion
+                expanded={expanded === index}
+                onChange={handleToggleExpand(index)}
+                sx={styles.AccordionMembro}
+                key={index}
               >
-                <Typography component="span">{membro.nome}</Typography>
-              </AccordionSummary>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls={`panel${index}-content`}
+                  id={`panel${index}-header`}
+                  sx={styles.AccordionMembroSummary}
+                >
+                  <Typography component="span">{membro.nome}</Typography>
+                </AccordionSummary>
 
-              <AccordionDetails sx={styles.AccordionMembroDetails}>
-                <Typography textAlign="center" fontSize={12.5} color="primary">
-                  Informações do membro:
-                </Typography>
+                <AccordionDetails sx={styles.AccordionMembroDetails}>
+                  <Typography
+                    textAlign="center"
+                    fontSize={12.5}
+                    color="primary"
+                  >
+                    Informações do membro:
+                  </Typography>
 
-                <Box sx={styles.boxInfoMembro}>
-                  {/* --- DADOS PESSOAIS --- */}
-                  <Box sx={styles.boxTopicosInfoMembro}>
-                    {[
-                      { label: "Nome", value: membro.nome },
-                      {
-                        label: "Data de Nascimento",
-                        value: membro.dataNascimento || "N/A",
-                      },
-                      { label: "Sexo", value: membro.sexo },
-                      { label: "Telefone", value: membro.telefone || "N/A" },
-                      {
-                        label: "Situação Civil",
-                        value: membro.situacaoCivil || "N/A",
-                      },
-                      { label: "Endereço", value: membro.endereco || "N/A" },
-                    ].map((info, i) => (
-                      <InfoItem key={i} label={info.label} value={info.value} />
-                    ))}
-                  </Box>
+                  <Box sx={styles.boxInfoMembro}>
+                    {/* --- DADOS PESSOAIS --- */}
+                    <Box sx={styles.boxTopicosInfoMembro}>
+                      {[
+                        { label: "Nome", value: membro.nome },
+                        {
+                          label: "Data de Nascimento",
+                          value: membro.dataNascimento || "N/A",
+                        },
+                        { label: "Sexo", value: membro.sexo },
+                        {
+                          label: "Telefone",
+                          value: membro.telefone || "N/A",
+                        },
+                        {
+                          label: "Situação Civil",
+                          value: membro.situacaoCivil || "N/A",
+                        },
+                        {
+                          label: "Endereço",
+                          value: membro.endereco || "N/A",
+                        },
+                      ].map((info, i) => (
+                        <InfoItem
+                          key={i}
+                          label={info.label}
+                          value={info.value}
+                        />
+                      ))}
+                    </Box>
 
-                  <Box sx={styles.dividerTopicosInfoMembro} />
+                    <Box sx={styles.dividerTopicosInfoMembro} />
 
-                  {/* --- CAMINHO ESPIRITUAL --- */}
-                  <Box sx={styles.boxTopicosInfoMembro}>
-                    {[
-                      {
-                        label: "Batizado",
-                        value: membro.batizado ? "Sim" : "Não",
-                      },
-                      {
-                        label: "Fez Encontro com Deus",
-                        value: membro.encontroComDeus ? "Sim" : "Não",
-                      },
-                      {
-                        label: "Fez Libertação",
-                        value: membro.libertacao ? "Sim" : "Não",
-                      },
-                      {
-                        label: "Foi Discipulado",
-                        value: membro.discipulado ? "Sim" : "Não",
-                      },
-                      {
-                        label: "Nome do Discipulador",
-                        value: membro.nomeDiscipulador || "N/A",
-                      },
-                      {
-                        label: "Função na Igreja",
-                        value: membro.funcaoIgreja || "N/A",
-                      },
-                    ].map((info, i) => (
-                      <InfoItem key={i} label={info.label} value={info.value} />
-                    ))}
-                  </Box>
+                    {/* --- CAMINHO ESPIRITUAL --- */}
+                    <Box sx={styles.boxTopicosInfoMembro}>
+                      {[
+                        {
+                          label: "Batizado",
+                          value: membro.batizado ? "Sim" : "Não",
+                        },
+                        {
+                          label: "Fez Encontro com Deus",
+                          value: membro.encontroComDeus ? "Sim" : "Não",
+                        },
+                        {
+                          label: "Fez Libertação",
+                          value: membro.libertacao ? "Sim" : "Não",
+                        },
+                        {
+                          label: "Foi Discipulado",
+                          value: membro.discipulado ? "Sim" : "Não",
+                        },
+                        {
+                          label: "Nome do Discipulador",
+                          value: membro.nomeDiscipulador || "N/A",
+                        },
+                        {
+                          label: "Função na Igreja",
+                          value: membro.funcaoIgreja || "N/A",
+                        },
+                      ].map((info, i) => (
+                        <InfoItem
+                          key={i}
+                          label={info.label}
+                          value={info.value}
+                        />
+                      ))}
+                    </Box>
 
-                  {/* --- CONSELHOS E DIRETORIA --- */}
-                  {[
-                    {
-                      label: "Conselho Fiscal",
-                      value:
-                        membro.conselhoFiscal.length > 0
-                          ? membro.conselhoFiscal
-                              .map((cons) => cons.nome)
-                              .join(", ")
-                          : "N/A",
-                    },
-                    {
-                      label: "Suplentes",
-                      value:
-                        membro.suplente.length > 0
-                          ? membro.suplente.map((sup) => sup.nome).join(", ")
-                          : "N/A",
-                    },
-                    {
-                      label: "Diretoria da Igreja",
-                      value:
-                        membro.diretoriaIgreja.length > 0
-                          ? membro.diretoriaIgreja
-                              .map((dir) => dir.nome)
-                              .join(", ")
-                          : "N/A",
-                    },
-                  ].map((info, i) => (
-                    <InfoItem key={i} label={info.label} value={info.value} />
-                  ))}
-
-                  <Box sx={styles.dividerTopicosInfoMembro} />
-
-                  {/* --- FUNÇÕES E LIDERANÇAS --- */}
-                  <Box sx={styles.boxTopicosInfoMembro}>
+                    {/* --- CONSELHOS E DIRETORIA --- */}
                     {[
                       {
-                        label: "Líder de Célula",
-                        value: membro.liderCelula ? "Sim" : "Não",
-                      },
-                      {
-                        label: "Professor",
-                        value: membro.professor ? "Sim" : "Não",
-                      },
-                    ].map((info, i) => (
-                      <InfoItem key={i} label={info.label} value={info.value} />
-                    ))}
-
-                    {[
-                      {
-                        label: "Professores Auxiliares",
+                        label: "Conselho Fiscal",
                         value:
-                          membro.auxiliarProfessor.length > 0
-                            ? membro.auxiliarProfessor
-                                .map((aux) => aux.nome)
+                          membro.conselhoFiscal.length > 0
+                            ? membro.conselhoFiscal
+                                .map((cons) => cons.nome)
+                                .join(", ")
+                            : "N/A",
+                      },
+                      {
+                        label: "Suplentes",
+                        value:
+                          membro.suplente.length > 0
+                            ? membro.suplente.map((sup) => sup.nome).join(", ")
+                            : "N/A",
+                      },
+                      {
+                        label: "Diretoria da Igreja",
+                        value:
+                          membro.diretoriaIgreja.length > 0
+                            ? membro.diretoriaIgreja
+                                .map((dir) => dir.nome)
                                 .join(", ")
                             : "N/A",
                       },
@@ -1271,46 +1288,99 @@ const Home = () => {
                       <InfoItem key={i} label={info.label} value={info.value} />
                     ))}
 
-                    {[
-                      {
-                        label: "Classe do Professor",
-                        value: membro.classeProfessor || "N/A",
-                      },
-                      {
-                        label: "Data de Início na Função",
-                        value: membro.dataInicioFuncao || "N/A",
-                      },
-                      {
-                        label: "Tempo na Função",
-                        value: membro.tempoNaFuncao || "N/A",
-                      },
-                      {
-                        label: "Fez Treinamento de Líderes",
-                        value: membro.treinamentoLideres ? "Sim" : "Não",
-                      },
-                      {
-                        label: "Passou pelo Trilho",
-                        value: membro.trilho ? "Sim" : "Não",
-                      },
-                    ].map((info, i) => (
-                      <InfoItem key={i} label={info.label} value={info.value} />
-                    ))}
+                    <Box sx={styles.dividerTopicosInfoMembro} />
+
+                    {/* --- FUNÇÕES E LIDERANÇAS --- */}
+                    <Box sx={styles.boxTopicosInfoMembro}>
+                      {[
+                        {
+                          label: "Líder de Célula",
+                          value: membro.liderCelula ? "Sim" : "Não",
+                        },
+                        {
+                          label: "Professor",
+                          value: membro.professor ? "Sim" : "Não",
+                        },
+                      ].map((info, i) => (
+                        <InfoItem
+                          key={i}
+                          label={info.label}
+                          value={info.value}
+                        />
+                      ))}
+
+                      {[
+                        {
+                          label: "Professores Auxiliares",
+                          value:
+                            membro.auxiliarProfessor.length > 0
+                              ? membro.auxiliarProfessor
+                                  .map((aux) => aux.nome)
+                                  .join(", ")
+                              : "N/A",
+                        },
+                      ].map((info, i) => (
+                        <InfoItem
+                          key={i}
+                          label={info.label}
+                          value={info.value}
+                        />
+                      ))}
+
+                      {[
+                        {
+                          label: "Classe do Professor",
+                          value: membro.classeProfessor || "N/A",
+                        },
+                        {
+                          label: "Data de Início na Função",
+                          value: membro.dataInicioFuncao || "N/A",
+                        },
+                        {
+                          label: "Tempo na Função",
+                          value: membro.tempoNaFuncao || "N/A",
+                        },
+                        {
+                          label: "Fez Treinamento de Líderes",
+                          value: membro.treinamentoLideres ? "Sim" : "Não",
+                        },
+                        {
+                          label: "Passou pelo Trilho",
+                          value: membro.trilho ? "Sim" : "Não",
+                        },
+                      ].map((info, i) => (
+                        <InfoItem
+                          key={i}
+                          label={info.label}
+                          value={info.value}
+                        />
+                      ))}
+                    </Box>
                   </Box>
-                </Box>
-              </AccordionDetails>
-              <AccordionActions>
-                <Button
-                  color="error"
-                  onClick={() => handleOpenDialogExcluirMembro(index)}
-                >
-                  Excluir
-                </Button>
-                <Button onClick={() => handleEditarMembro(index)}>
-                  Editar
-                </Button>
-              </AccordionActions>
-            </Accordion>
-          ))}
+                </AccordionDetails>
+                <AccordionActions>
+                  <Button
+                    color="error"
+                    onClick={() => handleOpenDialogExcluirMembro(index)}
+                  >
+                    Excluir
+                  </Button>
+                  <Button onClick={() => handleEditarMembro(index)}>
+                    Editar
+                  </Button>
+                </AccordionActions>
+              </Accordion>
+            ))
+          ) : (
+            <Typography
+              textAlign="center"
+              color="text.secondary"
+              fontStyle="italic"
+              sx={{ mt: 2 }}
+            >
+              Nenhum membro encontrado
+            </Typography>
+          )}
 
           {listaMembros?.length === 0 && (
             <Typography
@@ -1323,6 +1393,7 @@ const Home = () => {
           )}
         </Box>
 
+        {/* Dialog de confirmação de exclusão */}
         <Dialog
           open={openConfirmDialog}
           onClose={handleCloseDialogExcluirMembro}
