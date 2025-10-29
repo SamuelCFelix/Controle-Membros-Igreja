@@ -1,0 +1,94 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Membro {
+  id                 String  @id @default(uuid())
+  nome               String
+  dataNascimento     String?
+  sexo               String?
+  telefone           String?
+  situacaoCivil      String?
+  endereco           String?
+  batizado           Boolean @default(false)
+  encontroComDeus    Boolean @default(false)
+  libertacao         Boolean @default(false)
+  discipulado        Boolean @default(false)
+  temDiscipulador    Boolean @default(false)
+  nomeDiscipulador   String?
+  funcaoIgreja       String?
+  liderCelula        Boolean @default(false)
+  professor          Boolean @default(false)
+  classeProfessor    String?
+  dataInicioFuncao   String?
+  tempoNaFuncao      String?
+  treinamentoLideres Boolean @default(false)
+  trilho             Boolean @default(false)
+
+  // Relacionamentos (1:N)
+  conselhoFiscal      ConselhoFiscal[]
+  suplentes           Suplente[]
+  diretoriaIgreja     DiretoriaIgreja[]
+  auxiliaresProfessor AuxiliarProfessor[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("membros")
+}
+
+model ConselhoFiscal {
+  id        String   @id @default(uuid())
+  nome      String
+  membroId  String
+  membro    Membro   @relation(fields: [membroId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("conselho_fiscal")
+}
+
+model Suplente {
+  id        String   @id @default(uuid())
+  nome      String
+  membroId  String
+  membro    Membro   @relation(fields: [membroId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("suplentes")
+}
+
+model DiretoriaIgreja {
+  id        String   @id @default(uuid())
+  nome      String
+  membroId  String
+  membro    Membro   @relation(fields: [membroId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("diretoria_igreja")
+}
+
+model AuxiliarProfessor {
+  id        String   @id @default(uuid())
+  nome      String
+  membroId  String
+  membro    Membro   @relation(fields: [membroId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("auxiliar_professor")
+}
