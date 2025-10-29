@@ -26,7 +26,7 @@ const theme = createTheme({
       contrastText: "#fff",
     },
     background: {
-      default: "#fdfdfd",
+      default: "#eeeeee",
     },
   },
 });
