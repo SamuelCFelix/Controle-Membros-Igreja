@@ -1,0 +1,150 @@
+01/11/2025 03:38:49.175 [[31mERROR[0m] (Unknown location) Erro ao criar um novo membro: 
+Invalid `prisma.membro.create()` invocation in
+C:\Users\samue\Documents\Programação\Projetos\2025\ControleMembrosIgreja\controlemembrosigreja-backend\src\models\membro\membroModels.js:41:44
+
+  38   ...membroData
+  39 } = data;
+  40 
+→ 41 const membro = await prisma.membro.create({
+       data: {
+         nome: "Samuel Cardoso Félix",
+         dataNascimento: "2004-02-28",
+         sexo: "Masculino",
+         telefone: "84998942222",
+         situacaoCivil: "Solteiro",
+         endereco: "Rua José Fernandes de Queiroz - 920",
+         batizado: true,
+         encontroComDeus: true,
+         libertacao: true,
+         discipulado: true,
+         temDiscipulador: false,
+         nomeDiscipulador: "",
+         funcaoIgreja: "Produção",
+         suplente: [
+         ~~~~~~~~
+           {
+             nome: "Samuel Silva"
+           },
+           {
+             nome: "Renata Xavier"
+           }
+         ],
+         liderCelula: true,
+         professor: true,
+         classeProfessor: "Jovens",
+         auxiliarProfessor: [
+           {
+             nome: "João Vitor Santos"
+           },
+           {
+             nome: "Aurilúcia Félix"
+           }
+         ],
+         dataInicioFuncao: "2025-01-19",
+         tempoNaFuncao: "9 mêses e 14 dias",
+         treinamentoLideres: true,
+         trilho: true,
+         conselhoFiscal: {
+           create: [
+             {
+               nome: "João ZG"
+             },
+             {
+               nome: "Vinícius João"
+             }
+           ]
+         },
+         suplentes: undefined,
+         diretoriaIgreja: {
+           create: [
+             {
+               nome: "Pastor Edson Moreira"
+             },
+             {
+               nome: "Pastora Cidinha"
+             }
+           ]
+         },
+         auxiliaresProfessor: undefined,
+     ?   id?: String,
+     ?   createdAt?: DateTime,
+     ?   updatedAt?: DateTime
+       }
+     })
+
+Unknown argument `suplente`. Did you mean `suplentes`? Available options are marked with ?.
+01/11/2025 03:38:49.182 [[31mERROR[0m] (Unknown location) Erro no controller ao criar um novo membro: 
+Invalid `prisma.membro.create()` invocation in
+C:\Users\samue\Documents\Programação\Projetos\2025\ControleMembrosIgreja\controlemembrosigreja-backend\src\models\membro\membroModels.js:41:44
+
+  38   ...membroData
+  39 } = data;
+  40 
+→ 41 const membro = await prisma.membro.create({
+       data: {
+         nome: "Samuel Cardoso Félix",
+         dataNascimento: "2004-02-28",
+         sexo: "Masculino",
+         telefone: "84998942222",
+         situacaoCivil: "Solteiro",
+         endereco: "Rua José Fernandes de Queiroz - 920",
+         batizado: true,
+         encontroComDeus: true,
+         libertacao: true,
+         discipulado: true,
+         temDiscipulador: false,
+         nomeDiscipulador: "",
+         funcaoIgreja: "Produção",
+         suplente: [
+         ~~~~~~~~
+           {
+             nome: "Samuel Silva"
+           },
+           {
+             nome: "Renata Xavier"
+           }
+         ],
+         liderCelula: true,
+         professor: true,
+         classeProfessor: "Jovens",
+         auxiliarProfessor: [
+           {
+             nome: "João Vitor Santos"
+           },
+           {
+             nome: "Aurilúcia Félix"
+           }
+         ],
+         dataInicioFuncao: "2025-01-19",
+         tempoNaFuncao: "9 mêses e 14 dias",
+         treinamentoLideres: true,
+         trilho: true,
+         conselhoFiscal: {
+           create: [
+             {
+               nome: "João ZG"
+             },
+             {
+               nome: "Vinícius João"
+             }
+           ]
+         },
+         suplentes: undefined,
+         diretoriaIgreja: {
+           create: [
+             {
+               nome: "Pastor Edson Moreira"
+             },
+             {
+               nome: "Pastora Cidinha"
+             }
+           ]
+         },
+         auxiliaresProfessor: undefined,
+     ?   id?: String,
+     ?   createdAt?: DateTime,
+     ?   updatedAt?: DateTime
+       }
+     })
+
+Unknown argument `suplente`. Did you mean `suplentes`? Available options are marked with ?.
