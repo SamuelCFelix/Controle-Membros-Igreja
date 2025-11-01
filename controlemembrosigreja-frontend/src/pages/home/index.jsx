@@ -24,6 +24,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { PatternFormat } from "react-number-format";
 import { useEffect, useState } from "react";
+import api from "../../api";
 
 const styles = {
   container: {
@@ -138,6 +139,7 @@ const styles = {
 };
 
 const Home = () => {
+  const [listaMembros, setListaMembros] = useState([]);
   const [pesquisarMembro, setPesquisarMembro] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [indexEditMembro, setIndexEditMembro] = useState(null);
@@ -165,11 +167,67 @@ const Home = () => {
   const [tempoNaFuncao, setTempoNaFuncao] = useState("");
   const [treinamentoLideres, setTreinamentoLideres] = useState(false);
   const [trilho, setTrilho] = useState(false);
-  const [listaMembros, setListaMembros] = useState([]);
   const [expanded, setExpanded] = useState(false);
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [indexExcluirMembro, setIndexExcluirMembro] = useState(null);
+  const [loadingApi, setLoadingApi] = useState(false);
 
+  //UseEffects
+  useEffect(() => {
+    handleGetMembrosApi();
+  }, []);
+
+  //API's
+  const handleGetMembrosApi = async () => {
+    try {
+      const response = await api.get("/membros");
+      setListaMembros(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar membros:", error);
+    }
+  };
+
+  const handleCreateMembroApi = async () => {
+    try {
+      setLoadingApi(true);
+
+      await api.post("/membros", {
+        nome,
+        dataNascimento,
+        sexo,
+        telefone,
+        situacaoCivil,
+        endereco,
+        batizado,
+        encontroComDeus,
+        libertacao,
+        discipulado,
+        temDiscipulador,
+        nomeDiscipulador,
+        funcaoIgreja,
+        conselhoFiscal,
+        suplente,
+        diretoriaIgreja,
+        liderCelula,
+        professor,
+        classeProfessor,
+        auxiliarProfessor,
+        dataInicioFuncao,
+        tempoNaFuncao,
+        treinamentoLideres,
+        trilho,
+      });
+
+      handleGetMembrosApi();
+      handleCloseDialog();
+    } catch (error) {
+      console.error("Erro ao criar membro:", error);
+    } finally {
+      setLoadingApi(false);
+    }
+  };
+
+  //Funções
   const handleOpenDialog = (index) => {
     setOpenDialog(true);
   };
@@ -1116,12 +1174,16 @@ const Home = () => {
             </Box>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseDialog} sx={{ color: "red" }}>
+            <Button
+              disabled={loadingApi}
+              onClick={handleCloseDialog}
+              sx={{ color: "red" }}
+            >
               Cancelar
             </Button>
             <Button
-              disabled={nome.trim() === ""}
-              onClick={handleSalvar}
+              disabled={nome.trim() === "" || loadingApi}
+              onClick={handleCreateMembroApi}
               sx={{ color: "green" }}
             >
               {indexEditMembro !== null
