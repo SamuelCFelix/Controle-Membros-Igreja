@@ -32,15 +32,14 @@ model Membro {
   professor          Boolean @default(false)
   classeProfessor    String?
   dataInicioFuncao   String?
-  tempoNaFuncao      String?
   treinamentoLideres Boolean @default(false)
   trilho             Boolean @default(false)
 
   // Relacionamentos (1:N)
-  conselhoFiscal      ConselhoFiscal[]
-  suplentes           Suplente[]
-  diretoriaIgreja     DiretoriaIgreja[]
-  auxiliaresProfessor AuxiliarProfessor[]
+  conselhoFiscal    ConselhoFiscal[]
+  suplente          Suplente[]
+  diretoriaIgreja   DiretoriaIgreja[]
+  auxiliarProfessor AuxiliarProfessor[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -52,7 +51,7 @@ model ConselhoFiscal {
   id        String   @id @default(uuid())
   nome      String
   membroId  String
-  membro    Membro   @relation(fields: [membroId], references: [id])
+  membro    Membro   @relation(fields: [membroId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -63,7 +62,7 @@ model Suplente {
   id        String   @id @default(uuid())
   nome      String
   membroId  String
-  membro    Membro   @relation(fields: [membroId], references: [id])
+  membro    Membro   @relation(fields: [membroId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -74,7 +73,7 @@ model DiretoriaIgreja {
   id        String   @id @default(uuid())
   nome      String
   membroId  String
-  membro    Membro   @relation(fields: [membroId], references: [id])
+  membro    Membro   @relation(fields: [membroId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -85,7 +84,7 @@ model AuxiliarProfessor {
   id        String   @id @default(uuid())
   nome      String
   membroId  String
-  membro    Membro   @relation(fields: [membroId], references: [id])
+  membro    Membro   @relation(fields: [membroId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
