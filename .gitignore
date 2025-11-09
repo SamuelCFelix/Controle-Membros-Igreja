@@ -1,1 +1,79 @@
+# ==========================
+# 🌍 GERAL
+# ==========================
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Diretórios de dependências
+node_modules/
+controlemembrosigreja-frontend/node_modules/
+controlemembrosigreja-backend/node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Editor de código
+.vscode/
+.idea/
+
+# Ambiente
 .env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# ==========================
+# 🐳 DOCKER
+# ==========================
+# Dados persistentes do Postgres
+/data/
+data/
+**/data/postgres/
+
+# Arquivos temporários de containers
+docker-compose.override.yml
+.docker/
+
+# ==========================
+# ⚙️ BACKEND (Node + Prisma)
+# ==========================
+controlemembrosigreja-backend/prisma/dev.db
+controlemembrosigreja-backend/prisma/migrations/
+controlemembrosigreja-backend/.env
+controlemembrosigreja-backend/.env.local
+
+# Build
+controlemembrosigreja-backend/dist/
+controlemembrosigreja-backend/build/
+
+# ==========================
+# 💻 FRONTEND (React + Vite)
+# ==========================
+controlemembrosigreja-frontend/.env
+controlemembrosigreja-frontend/.env.local
+controlemembrosigreja-frontend/.env.development
+controlemembrosigreja-frontend/.env.production
+
+controlemembrosigreja-frontend/.vite/
+controlemembrosigreja-frontend/dist/
+controlemembrosigreja-frontend/build/
+
+# ==========================
+# 🧩 OUTROS
+# ==========================
+*.sqlite
+*.sqlite-journal
+*.pid
+*.seed
+*.tgz

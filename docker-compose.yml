@@ -1,11 +1,11 @@
 services:
   frontend:
-    build: ./frontend
+    build: ./controlemembrosigreja-frontend
     container_name: igreja_frontend
     ports:
       - "80:80"
     env_file:
-      - ./frontend/.env
+      - ./controlemembrosigreja-frontend/.env
     depends_on:
       - backend
     restart: always
@@ -13,12 +13,12 @@ services:
       - igreja_network
 
   backend:
-    build: ./backend
+    build: ./controlemembrosigreja-backend
     container_name: igreja_backend
     ports:
       - "3000:3000"
     env_file:
-      - ./backend/.env
+      - ./controlemembrosigreja-backend/.env
     depends_on:
       - db
     restart: always

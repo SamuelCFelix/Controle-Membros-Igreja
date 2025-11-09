@@ -5,7 +5,8 @@ const cors = require("cors");
 const server = express();
 
 const corsOptions = {
-  origin: process.env.ORIGIN_DOMAIN,
+  /* origin: process.env.ORIGIN_DOMAIN, */
+  origin: ["http://localhost", "http://localhost:80"],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: [
     "Content-Type",
